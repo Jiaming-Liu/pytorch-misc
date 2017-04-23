@@ -40,6 +40,7 @@ class FeatureExtractIter(object):
         assert isinstance(dataloader, torch.utils.data.DataLoader)
         assert isinstance(extractor, torch.nn.Module)
         self.q = queue.Queue(maxsize=max_queue_size)
+        self.dataloader = dataloader
         start_new_thread(extract_feature, (dataloader, self.q, extractor, dev_id))
 
     def __iter__(self):
@@ -51,6 +52,9 @@ class FeatureExtractIter(object):
             raise StopIteration
         else:
             return obj
+
+    def __len__(self):
+        return len(self.dataloader)
 
     next = __next__
 
