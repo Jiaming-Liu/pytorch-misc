@@ -6,6 +6,34 @@ try:
 except ImportError:
     import Queue as queue
 
+    
+# Demo:
+# 
+# from torchvision.models.vgg import make_layers
+# from torch.utils.data import DataLoader
+# import torchvision.datasets as datasets
+# from FeatureExtractIter import FeatureExtractIter
+# 
+# feature_net = make_layers(
+#     [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'], False)
+# 
+# feature_net.cuda(0)
+# feature_net.eval()
+#
+# train_loader = DataLoader(
+#     dataset=datasets.ImageFolder('../MY_FAV_DATASET/Train/'),
+#     batch_size=256,
+#     collate_fn=modified_collate_fn, # see sample of collate_fn in the end of this file
+#     shuffle=True,
+#     num_workers=8)
+# 
+# for epoch in range(2):  # loop over the dataset multiple times
+# 
+#     iter = FeatureExtractIter(train_loader, feature_net, dev_id=0)
+#     for i, data in enumerate(iter, 0):
+#         pass
+#
+
 
 class FeatureExtractIter(object):
     def __init__(self, dataloader, extractor, dev_id, max_queue_size=2):
