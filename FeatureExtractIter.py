@@ -64,7 +64,7 @@ def extract_feature(dataloader, q, extractor, dev_id):
             for x in input2s:
                 x = Variable(x, volatile=True)
                 x = x.cuda(dev_id)
-                out.append(extractor(x).cpu())
+                out.append(extractor(x).cpu().data)
             out = torch.cat(out, 0)
             q.put((input1, out, target))
     except KeyboardInterrupt:
