@@ -12,7 +12,7 @@ except ImportError:
 # from torchvision.models.vgg import make_layers
 # from torch.utils.data import DataLoader
 # import torchvision.datasets as datasets
-# from FeatureExtractIter import FeatureExtractIter
+# from featureLoader import FeatureLoader
 # 
 # feature_net = make_layers(
 #     [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'], False)
@@ -26,21 +26,35 @@ except ImportError:
 #     collate_fn=modified_collate_fn, # see sample of collate_fn in the end of this file
 #     shuffle=True,
 #     num_workers=8)
-# 
+#
+# train_feature_loader = FeatureLoader(train_loader, feature_net, dev_id=0)
+#
 # for epoch in range(2):  # loop over the dataset multiple times
 # 
-#     iter = FeatureExtractIter(train_loader, feature_net, dev_id=0)
-#     for i, data in enumerate(iter, 0):
+#     for i, data in enumerate(train_feature_loader, 0):
 #         pass
 #
 
 
-class FeatureExtractIter(object):
+class FeatureLoader(object):
     def __init__(self, dataloader, extractor, dev_id, max_queue_size=2):
         assert isinstance(dataloader, torch.utils.data.DataLoader)
         assert isinstance(extractor, torch.nn.Module)
-        self.q = queue.Queue(maxsize=max_queue_size)
         self.dataloader = dataloader
+        self.extractor = extractor
+        self.dev_id = dev_id
+        self.max_queue_size = max_queue_size
+
+    def __iter__(self):
+        return FeatureExtractIter(self.dataloader, self.extractor, self.dev_id, self.max_queue_size)
+
+    def __len__(self):
+        return len(self.dataloader)
+
+
+class FeatureExtractIter(object):
+    def __init__(self, dataloader, extractor, dev_id, max_queue_size):
+        self.q = queue.Queue(maxsize=max_queue_size)
         start_new_thread(extract_feature, (dataloader, self.q, extractor, dev_id))
 
     def __iter__(self):
@@ -52,9 +66,6 @@ class FeatureExtractIter(object):
             raise StopIteration
         else:
             return obj
-
-    def __len__(self):
-        return len(self.dataloader)
 
     next = __next__
 
