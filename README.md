@@ -11,4 +11,4 @@ Some useful tools for pytorch.
 
  - group_weight.py
 
-	Avoid l2 regularization on biases.
+	Avoid L2 regularization on biases & batch norm params.
