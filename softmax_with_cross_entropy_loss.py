@@ -1,6 +1,8 @@
 import torch
 from torch.autograd import Function
 
+# NOT USEFUL! THE OFFICIAL IMPLEMENTATION IS CORRECT.
+
 # Example:
 # output = model(data)
 # loss = SoftmaxWithCrossEntropy(output, target)
